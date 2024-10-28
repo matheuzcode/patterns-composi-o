@@ -1,25 +1,37 @@
-import React from "react";
+import React, { InputHTMLAttributes, ReactNode } from "react";
 
-interface inputFieldProps {
-    name: string
-    value: string
-    onChange: (name: string, value: string) => void
-    type?: string
-    placeholder?: string
-
-
+interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
+    // onChange: (name: string, value: string) => void; // Definindo o onChange personalizado
+    // name: string; // 'n
+    onCustomChange?:(name: string, value: string) => void;
 }
 
-const InputField: React.FC<inputFieldProps> = ({name, value, onChange, type = "text", placeholder}) => {
+function Input ({children}:{children:ReactNode}){
+    return <div>{children}</div>
+}
+
+const InputField: React.FC<InputFieldProps> = ({ onCustomChange, ...rest }) => {
+
+
+
+    const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+        
+        rest.onChange && rest.onChange(e); // Chama a função onChange com o nome e valor
+        onCustomChange && rest.name && onCustomChange(rest.name, e.target.value)
+    
+    };
+
     return (
-        <input 
-            type={type}
-            name={name}
-            value={value}
-            onChange={e => onChange(name, e.target.value)}
-            placeholder={placeholder}
+        <input
+            {...rest}
+        onChange={handleChange} // Chama a função handleChange
         />
-    )
-}
+    );
+};
 
-export default InputField
+Input.Field = InputField
+
+
+export {Input}
+
+
